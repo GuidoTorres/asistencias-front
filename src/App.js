@@ -41,7 +41,7 @@ const RegistroAsistencia = () => {
 
   const enviarDatos = async (formData) => {
     try {
-      const response = await fetch("http://localhost:3001/api/v1/asistencia", {
+      const response = await fetch("http://3.145.205.44/api/v1/asistencia", {
         method: "POST",
         body: formData,
       });
