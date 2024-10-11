@@ -1,49 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./App.css";
 import { message } from "antd";
 
 const RegistroAsistencia = () => {
   const [dni, setDni] = useState("");
   const [foto, setFoto] = useState(null);
+  const fileInputRef = useRef(null); // Crear una referencia para el campo de archivo
 
   const handleDniChange = (e) => setDni(e.target.value);
   const handleFotoChange = (e) => setFoto(e.target.files[0]);
 
   const registrarAsistencia = () => {
-    // Crear FormData para enviar datos al backend
     const formData = new FormData();
     formData.append("dni", dni);
-    formData.append("foto", foto); // La foto seleccionada por el usuario
+    formData.append("foto", foto);
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const latitud = position.coords.latitude;
           const longitud = position.coords.longitude;
-          
-          // Agregar latitud y longitud si la geolocalización está disponible
           formData.append("latitud", latitud);
           formData.append("longitud", longitud);
-
           await enviarDatos(formData);
         },
         async (error) => {
-          // Si no se puede obtener la geolocalización, continuar sin latitud/longitud
           console.log("Geolocalización no disponible, se procederá sin ubicación.");
-          
-          // Puedes usar valores predeterminados o dejar vacíos
           formData.append("latitud", "");
           formData.append("longitud", "");
-          
           await enviarDatos(formData);
         }
       );
     } else {
-      // Si el navegador no soporta geolocalización, proceder sin ella
       console.log("Geolocalización no es soportada por este navegador.");
       formData.append("latitud", "");
       formData.append("longitud", "");
-      
       enviarDatos(formData);
     }
   };
@@ -55,11 +46,14 @@ const RegistroAsistencia = () => {
         body: formData,
       });
       const data = await response.json();
-      
+
       if (response.status === 200) {
         message.success(data.mensaje);
-        setDni("");
-        setFoto(null);
+        setDni(""); // Limpiar el campo de DNI
+        setFoto(null); // Limpiar el estado de la imagen
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ""; // Limpiar el campo de archivo
+        }
       } else {
         message.error(data.mensaje);
       }
@@ -78,7 +72,12 @@ const RegistroAsistencia = () => {
         value={dni}
         onChange={handleDniChange}
       />
-      <input type="file" onChange={handleFotoChange} accept="image/*" />
+      <input
+        type="file"
+        ref={fileInputRef} // Añadir la referencia al campo de archivo
+        onChange={handleFotoChange}
+        accept="image/*"
+      />
       <button onClick={registrarAsistencia}>Registrar Asistencia</button>
     </div>
   );
