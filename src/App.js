@@ -25,7 +25,7 @@ const RegistroAsistencia = () => {
         formData.append("longitud", longitud);
         
         const response = await fetch(
-          "http://localhost:3001/api/v1/asistencia",
+          "http://18.116.48.172:3001/api/v1/asistencia",
           {
             method: "POST",
             body: formData,
