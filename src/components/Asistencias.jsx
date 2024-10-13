@@ -5,53 +5,59 @@ import "./styles/asistencias.css";
 const Asistencias = () => {
   const [dni, setDni] = useState("");
   const [foto, setFoto] = useState(null);
-  const fileInputRef = useRef(null); // Crear una referencia para el campo de archivo
+  const fileInputRef = useRef(null);
 
   const handleDniChange = (e) => setDni(e.target.value);
-  const handleFotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file && file.size > 5000000) { // Si la imagen es mayor a 5MB
-      message.error("La imagen es demasiado grande. Máximo 5MB.");
-      return;
-    }
-    setFoto(file);
-  };
+  const handleFotoChange = (e) => setFoto(e.target.files[0]);
+
   const registrarAsistencia = () => {
+    message.info("Botón de registrar presionado");
     const formData = new FormData();
     formData.append("dni", dni);
     formData.append("foto", foto);
 
+    // Validar que se haya ingresado un DNI y una foto
+    if (!dni || !foto) {
+      message.error("Por favor ingrese el DNI y seleccione una foto.");
+      return;
+    }
+
+    // Verificar si la geolocalización está disponible
     if (navigator.geolocation) {
+      message.info("Obteniendo geolocalización...");
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const latitud = position.coords.latitude;
           const longitud = position.coords.longitude;
+          message.success(`Ubicación obtenida: Latitud ${latitud}, Longitud ${longitud}`);
           formData.append("latitud", latitud);
           formData.append("longitud", longitud);
-          await enviarDatos(formData);
+          await enviarDatos(formData);  // Enviar los datos
         },
         async (error) => {
-          console.log("Geolocalización no disponible, se procederá sin ubicación.");
+          message.error("No se pudo obtener la ubicación, se procederá sin ella.");
           formData.append("latitud", "");
           formData.append("longitud", "");
-          await enviarDatos(formData);
-        },
-        { timeout: 2000 } // Timeout de 10 segundos
+          await enviarDatos(formData);  // Enviar los datos
+        }
       );
     } else {
-      console.log("Geolocalización no es soportada por este navegador.");
+      message.error("Geolocalización no es soportada por este navegador.");
       formData.append("latitud", "");
       formData.append("longitud", "");
-      enviarDatos(formData);
+      enviarDatos(formData);  // Enviar los datos
     }
   };
 
   const enviarDatos = async (formData) => {
+    message.info("Enviando datos...");
+
     try {
       const response = await fetch("http://3.145.205.44/api/v1/asistencia", {
         method: "POST",
         body: formData,
       });
+
       const data = await response.json();
 
       if (response.status === 200) {
@@ -62,15 +68,13 @@ const Asistencias = () => {
           fileInputRef.current.value = ""; // Limpiar el campo de archivo
         }
       } else {
-        message.error(data.mensaje);
+        message.error(data.mensaje || "Error al registrar la asistencia.");
       }
     } catch (error) {
-      console.log("Error registrando la asistencia:", error);
-      message.error("Ocurrió un error al registrar la asistencia.");
-      message.error(error);
-
+      message.error("Error al enviar los datos: " + error.message);
     }
   };
+
   return (
     <div className="container">
       <h2 className="h2">Registro de Asistencia</h2>
@@ -82,7 +86,7 @@ const Asistencias = () => {
       />
       <input
         type="file"
-        ref={fileInputRef} // Añadir la referencia al campo de archivo
+        ref={fileInputRef}
         onChange={handleFotoChange}
         accept="image/*"
       />
