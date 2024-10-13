@@ -51,6 +51,11 @@ const MostrarAsistencias = () => {
       align: "center",
     },
     {
+      title: "Fecha",
+      dataIndex: "fecha",
+      align: "center",
+    },
+    {
       title: "Ingreso",
       dataIndex: "estado_ingreso",
       align: "center",
@@ -60,11 +65,7 @@ const MostrarAsistencias = () => {
       dataIndex: "estado_salida",
       align: "center",
     },
-    {
-      title: "Fecha",
-      dataIndex: "fecha",
-      align: "center",
-    },
+
     {
       title: "Estado día",
       render: (_, record) => (
@@ -117,7 +118,6 @@ const MostrarAsistencias = () => {
             dataSource={asistencias}
             style={{ marginTop: "10px" }}
             scroll={{ x: 800 }} // Scroll horizontal si la tabla se sale de la pantalla
-            
           />
         </div>
       </div>
