@@ -8,8 +8,22 @@ const Asistencias = () => {
   const fileInputRef = useRef(null);
 
   const handleDniChange = (e) => setDni(e.target.value);
-  const handleFotoChange = (e) => setFoto(e.target.files[0]);
-  const registrarAsistencia = () => {
+  const handleFotoChange = (e) => {
+    const file = e.target.files[0];
+    
+    // Limitar el tamaño a 2 MB (2 * 1024 * 1024 bytes)
+    const maxSizeInMB = 2;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+  
+    if (file && file.size > maxSizeInBytes) {
+      message.error(`El tamaño del archivo no debe exceder los ${maxSizeInMB} MB.`);
+      setFoto(null); // Opcional: limpiar el estado de la imagen si el tamaño es excesivo
+      e.target.value = ""; // Limpiar el campo de archivo
+      return;
+    }
+  
+    setFoto(file);
+  };  const registrarAsistencia = () => {
     const formData = new FormData();
     formData.append("dni", dni);
     formData.append("foto", foto);
