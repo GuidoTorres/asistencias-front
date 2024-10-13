@@ -54,7 +54,6 @@ const Asistencias = () => {
       formData.append("longitud", "");
       
       // Notificar al usuario que la ubicación no está disponible
-      message.warning("Geolocalización no soportada en este navegador, se enviará sin ubicación.");
       
       enviarDatos(formData);
     }
@@ -62,7 +61,6 @@ const Asistencias = () => {
   
 
   const enviarDatos = async (formData) => {
-    message.info("Enviando datos...");
 
     const response = await fetch("http://3.145.205.44/api/v1/asistencia", {
       method: "POST",
