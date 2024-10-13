@@ -9,50 +9,48 @@ const Asistencias = () => {
 
   const handleDniChange = (e) => setDni(e.target.value);
   const handleFotoChange = (e) => setFoto(e.target.files[0]);
-
   const registrarAsistencia = () => {
-    // Validar que se haya ingresado un DNI y una foto
-    if (!dni || !foto) {
-      message.error("Por favor ingrese el DNI y seleccione una foto.");
-      return;
-    }
     const formData = new FormData();
     formData.append("dni", dni);
     formData.append("foto", foto);
-
-    // Verificar si la geolocalización está disponible
+  
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const latitud = position.coords.latitude;
           const longitud = position.coords.longitude;
-          message.success(
-            `Ubicación obtenida: Latitud ${latitud}, Longitud ${longitud}`
-          );
-          formData.append("latitud", latitud || "");
-          formData.append("longitud", longitud || "");
-          await enviarDatos(formData); // Enviar los datos
+          formData.append("latitud", latitud);
+          formData.append("longitud", longitud);
+          await enviarDatos(formData);
         },
         async (error) => {
-          message.error(
-            "No se pudo obtener la ubicación, se procederá sin ella."
-          );
-          formData.append("latitud", "");
+          // Si la geolocalización falla, asigna latitud y longitud vacías
+          formData.append("latitud", ""); // O puedes usar "0" o algún valor por defecto
           formData.append("longitud", "");
-          await enviarDatos(formData); // Enviar los datos
+          
+          // Notificar al usuario que la ubicación fue bloqueada
+          message.warning("Acceso a la ubicación fue bloqueado, se enviará sin ubicación.");
+  
+          await enviarDatos(formData);
         }
       );
     } else {
-      formData.append("latitud", "");
+      console.log("Geolocalización no es soportada por este navegador.");
+      formData.append("latitud", ""); // O puedes usar "0" o algún valor por defecto
       formData.append("longitud", "");
-      enviarDatos(formData); // Enviar los datos
+      
+      // Notificar al usuario que la ubicación no está disponible
+      message.warning("Geolocalización no soportada en este navegador, se enviará sin ubicación.");
+      
+      enviarDatos(formData);
     }
   };
+  
 
   const enviarDatos = async (formData) => {
     message.info("Enviando datos...");
 
-    const response = await fetch("http://localhost:3001/api/v1/asistencia", {
+    const response = await fetch("http://3.145.205.44/api/v1/asistencia", {
       method: "POST",
       body: formData,
     });
@@ -61,8 +59,8 @@ const Asistencias = () => {
 
     if (response.status === 200) {
       message.success(data.mensaje);
-      setDni(""); // Limpiar el campo de DNI
-      setFoto(null); // Limpiar el estado de la imagen
+      setDni(""); 
+      setFoto(null); 
       if (fileInputRef.current) {
         fileInputRef.current.value = ""; // Limpiar el campo de archivo
       }
