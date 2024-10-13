@@ -67,6 +67,8 @@ const Asistencias = () => {
     } catch (error) {
       console.log("Error registrando la asistencia:", error);
       message.error("Ocurrió un error al registrar la asistencia.");
+      message.error(error);
+
     }
   };
   return (
