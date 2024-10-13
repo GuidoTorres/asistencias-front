@@ -34,6 +34,7 @@
   
     .table-container {
       margin-top: 15px;
+
     }
   }
   
@@ -45,6 +46,10 @@
   
     .input-form {
       font-size: 14px;
+    }
+    .table-container {
+      margin-top: 15px;
+
     }
   }
   

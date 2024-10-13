@@ -15,6 +15,8 @@ const MostrarAsistencias = () => {
   useEffect(() => {
     if (data.id !== "" || data.fecha !== "") {
       getAsistencias();
+    } else {
+      getAsistencias();
     }
   }, [data]);
 
@@ -49,12 +51,12 @@ const MostrarAsistencias = () => {
       align: "center",
     },
     {
-      title: "Estado ingreso",
+      title: "Ingreso",
       dataIndex: "estado_ingreso",
       align: "center",
     },
     {
-      title: "Estado salida",
+      title: "Salida",
       dataIndex: "estado_salida",
       align: "center",
     },
@@ -65,7 +67,19 @@ const MostrarAsistencias = () => {
     },
     {
       title: "Estado día",
-      render: (_, record) => <Tag color={record?.estado_dia === "Falta" ? "volcano" : record?.estado_dia === "Asistencia" ? "green": "processing"}>{record?.estado_dia || "Pendiente"}</Tag>,
+      render: (_, record) => (
+        <Tag
+          color={
+            record?.estado_dia === "Falta"
+              ? "volcano"
+              : record?.estado_dia === "Asistencia"
+              ? "green"
+              : "processing"
+          }
+        >
+          {record?.estado_dia || "Pendiente"}
+        </Tag>
+      ),
       align: "center",
     },
   ];
@@ -102,6 +116,8 @@ const MostrarAsistencias = () => {
             columns={columns}
             dataSource={asistencias}
             style={{ marginTop: "10px" }}
+            scroll={{ x: 800 }} // Scroll horizontal si la tabla se sale de la pantalla
+            
           />
         </div>
       </div>
