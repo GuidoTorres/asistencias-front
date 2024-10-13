@@ -11,27 +11,25 @@ const Asistencias = () => {
   const handleFotoChange = (e) => setFoto(e.target.files[0]);
 
   const registrarAsistencia = () => {
-    message.info("Botón de registrar presionado");
-    const formData = new FormData();
-    formData.append("dni", dni);
-    formData.append("foto", foto);
 
     // Validar que se haya ingresado un DNI y una foto
     if (!dni || !foto) {
       message.error("Por favor ingrese el DNI y seleccione una foto.");
       return;
     }
+    const formData = new FormData();
+    formData.append("dni", dni);
+    formData.append("foto", foto);
 
     // Verificar si la geolocalización está disponible
     if (navigator.geolocation) {
-      message.info("Obteniendo geolocalización...");
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const latitud = position.coords.latitude;
           const longitud = position.coords.longitude;
           message.success(`Ubicación obtenida: Latitud ${latitud}, Longitud ${longitud}`);
-          formData.append("latitud", latitud);
-          formData.append("longitud", longitud);
+          formData.append("latitud", latitud || "");
+          formData.append("longitud", longitud || "");
           await enviarDatos(formData);  // Enviar los datos
         },
         async (error) => {
@@ -42,7 +40,6 @@ const Asistencias = () => {
         }
       );
     } else {
-      message.error("Geolocalización no es soportada por este navegador.");
       formData.append("latitud", "");
       formData.append("longitud", "");
       enviarDatos(formData);  // Enviar los datos
