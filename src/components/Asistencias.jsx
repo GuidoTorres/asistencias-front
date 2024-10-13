@@ -8,8 +8,14 @@ const Asistencias = () => {
   const fileInputRef = useRef(null); // Crear una referencia para el campo de archivo
 
   const handleDniChange = (e) => setDni(e.target.value);
-  const handleFotoChange = (e) => setFoto(e.target.files[0]);
-
+  const handleFotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.size > 5000000) { // Si la imagen es mayor a 5MB
+      message.error("La imagen es demasiado grande. Máximo 5MB.");
+      return;
+    }
+    setFoto(file);
+  };
   const registrarAsistencia = () => {
     const formData = new FormData();
     formData.append("dni", dni);
@@ -25,13 +31,12 @@ const Asistencias = () => {
           await enviarDatos(formData);
         },
         async (error) => {
-          console.log(
-            "Geolocalización no disponible, se procederá sin ubicación."
-          );
+          console.log("Geolocalización no disponible, se procederá sin ubicación.");
           formData.append("latitud", "");
           formData.append("longitud", "");
           await enviarDatos(formData);
-        }
+        },
+        { timeout: 2000 } // Timeout de 10 segundos
       );
     } else {
       console.log("Geolocalización no es soportada por este navegador.");
