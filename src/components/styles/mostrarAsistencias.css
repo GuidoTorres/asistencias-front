@@ -1,10 +1,10 @@
 /* Estilos generales */
 .historial{
   margin-top: 20px;
-  width: 100%;
+  padding-right: 50px;
 }
 .container-historial {
-    width: 95%;
+    width: 100%;
     margin: 0 auto;
     padding: 20px;
     background-color: #ffffff;
