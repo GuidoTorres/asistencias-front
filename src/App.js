@@ -1,86 +1,38 @@
-import React, { useState, useRef } from "react";
-import "./App.css";
-import { message } from "antd";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { Anchor } from "antd";
+import MostrarAsistencias from "./components/MostrarAsistencias";
+import Asistencias from "./components/Asistencias";
 
-const RegistroAsistencia = () => {
-  const [dni, setDni] = useState("");
-  const [foto, setFoto] = useState(null);
-  const fileInputRef = useRef(null); // Crear una referencia para el campo de archivo
 
-  const handleDniChange = (e) => setDni(e.target.value);
-  const handleFotoChange = (e) => setFoto(e.target.files[0]);
-
-  const registrarAsistencia = () => {
-    const formData = new FormData();
-    formData.append("dni", dni);
-    formData.append("foto", foto);
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const latitud = position.coords.latitude;
-          const longitud = position.coords.longitude;
-          formData.append("latitud", latitud);
-          formData.append("longitud", longitud);
-          await enviarDatos(formData);
-        },
-        async (error) => {
-          console.log("Geolocalización no disponible, se procederá sin ubicación.");
-          formData.append("latitud", "");
-          formData.append("longitud", "");
-          await enviarDatos(formData);
-        }
-      );
-    } else {
-      console.log("Geolocalización no es soportada por este navegador.");
-      formData.append("latitud", "");
-      formData.append("longitud", "");
-      enviarDatos(formData);
-    }
-  };
-
-  const enviarDatos = async (formData) => {
-    try {
-      const response = await fetch("http://3.145.205.44/api/v1/asistencia", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await response.json();
-
-      if (response.status === 200) {
-        message.success(data.mensaje);
-        setDni(""); // Limpiar el campo de DNI
-        setFoto(null); // Limpiar el estado de la imagen
-        if (fileInputRef.current) {
-          fileInputRef.current.value = ""; // Limpiar el campo de archivo
-        }
-      } else {
-        message.error(data.mensaje);
-      }
-    } catch (error) {
-      console.log("Error registrando la asistencia:", error);
-      message.error("Ocurrió un error al registrar la asistencia.");
-    }
-  };
-
+const App = () => {
   return (
-    <div className="container">
-      <h2 className="h2">Registro de Asistencia</h2>
-      <input
-        type="text"
-        placeholder="DNI"
-        value={dni}
-        onChange={handleDniChange}
+    <Router>
+      <div style={{ padding: "20px" }}>
+        {/* Ancla de navegación */}
+        <Anchor
+        direction="horizontal"
+        items={[
+          {
+            key: 'part-1',
+            href:"/historial", title:"Historial de Asistencias"
+          },
+          {
+            key: 'part-2',
+            href:"/asistencias", title:"Registrar Asistencia"
+          },
+
+        ]}
       />
-      <input
-        type="file"
-        ref={fileInputRef} // Añadir la referencia al campo de archivo
-        onChange={handleFotoChange}
-        accept="image/*"
-      />
-      <button onClick={registrarAsistencia}>Registrar Asistencia</button>
-    </div>
+
+        {/* Contenido de las rutas */}
+        <Routes>
+          <Route path="/historial" element={<MostrarAsistencias />} />
+          <Route path="/asistencias" element={<Asistencias />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
-export default RegistroAsistencia;
+export default App;

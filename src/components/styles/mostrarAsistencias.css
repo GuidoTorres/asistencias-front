@@ -1,0 +1,51 @@
+/* Estilos generales */
+.historial{
+  margin-top: 20px;
+  width: 100%;
+}
+.container-historial {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: "100px";
+  }
+  
+  .input-form {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  .table-container {
+    margin-top: 20px;
+  }
+  
+  /* Estilos responsivos */
+  @media (max-width: 768px) {
+    .container {
+      padding: 10px;
+    }
+  
+    .input-form {
+      margin-bottom: 10px;
+    }
+  
+    .table-container {
+      margin-top: 15px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .container {
+      width: 100%;
+      padding: 5px;
+    }
+  
+    .input-form {
+      font-size: 14px;
+    }
+  }
+  

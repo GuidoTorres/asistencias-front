@@ -1,0 +1,112 @@
+import { DatePicker, Select, Table, Tag } from "antd";
+import React, { useEffect, useState } from "react";
+import "./styles/mostrarAsistencias.css"; // Importa tus estilos aquí
+
+const MostrarAsistencias = () => {
+  const [asistencias, setAsistencias] = useState([]);
+  const [empleados, setEmpleados] = useState([]);
+  const [data, setData] = useState({ id: "", fecha: "" });
+
+  useEffect(() => {
+    getEmpleados();
+    getAsistencias();
+  }, []);
+
+  useEffect(() => {
+    if (data.id !== "" || data.fecha !== "") {
+      getAsistencias();
+    }
+  }, [data]);
+
+  const getAsistencias = async () => {
+    const params = new URLSearchParams();
+    if (data.id) {
+      params.append("id", data.id);
+    }
+    if (data.fecha) {
+      params.append("fecha", data.fecha);
+    }
+    const url = `http://3.145.205.44/api/v1/asistencia?${params.toString()}`;
+    try {
+      const response = await fetch(url);
+      const info = await response.json();
+      if (info) setAsistencias(info.data);
+    } catch (error) {
+      console.error("Error al obtener asistencias:", error);
+    }
+  };
+
+  const getEmpleados = async () => {
+    const response = await fetch("http://3.145.205.44/api/v1/empleados");
+    const info = await response.json();
+    if (info) setEmpleados(info);
+  };
+
+  const columns = [
+    {
+      title: "Empleado",
+      render: (_, record) => record?.empleado?.nombre,
+      align: "center",
+    },
+    {
+      title: "Estado ingreso",
+      dataIndex: "estado_ingreso",
+      align: "center",
+    },
+    {
+      title: "Estado salida",
+      dataIndex: "estado_salida",
+      align: "center",
+    },
+    {
+      title: "Fecha",
+      dataIndex: "fecha",
+      align: "center",
+    },
+    {
+      title: "Estado día",
+      render: (_, record) => <Tag color={record?.estado_dia === "Falta" ? "volcano" : record?.estado_dia === "Asistencia" ? "green": "processing"}>{record?.estado_dia || "Pendiente"}</Tag>,
+      align: "center",
+    },
+  ];
+
+  return (
+    <div className="historial">
+      <div className="container-historial">
+        <Select
+          className="input-form"
+          placeholder={"Empleados"}
+          onChange={(e) => setData((value) => ({ ...value, id: e }))}
+          showSearch
+          optionFilterProp="children"
+          filterOption={(input, option) =>
+            (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+          }
+          allowClear
+          options={empleados?.map((item) => {
+            return {
+              value: item.id,
+              label: item.nombre,
+            };
+          })}
+        />
+        <DatePicker
+          className="input-form"
+          onChange={(e) => setData((value) => ({ ...value, fecha: e }))}
+          format={"DD/MM/YYYY"}
+          placeholder="Fecha"
+        />
+
+        <div className="table-container">
+          <Table
+            columns={columns}
+            dataSource={asistencias}
+            style={{ marginTop: "10px" }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MostrarAsistencias;
