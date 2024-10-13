@@ -52,13 +52,13 @@ const Asistencias = () => {
   const enviarDatos = async (formData) => {
     message.info("Enviando datos...");
 
-    const response = await fetch("http://3.145.205.44/api/v1/asistencia", {
+    const response = await fetch("http://localhost:3001/api/v1/asistencia", {
       method: "POST",
       body: formData,
     });
 
-    const data = await response.text();
-    
+    const data = await response.json();
+
     if (response.status === 200) {
       message.success(data.mensaje);
       setDni(""); // Limpiar el campo de DNI
@@ -67,7 +67,7 @@ const Asistencias = () => {
         fileInputRef.current.value = ""; // Limpiar el campo de archivo
       }
     } else {
-      message.error(data.mensaje || "Error al registrar la asistencia.");
+      message.error(data.mensaje);
     }
   };
 
