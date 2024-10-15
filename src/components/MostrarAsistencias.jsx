@@ -28,7 +28,7 @@ const MostrarAsistencias = () => {
     if (data.fecha) {
       params.append("fecha", data.fecha);
     }
-    const url = `http://localhost:3001/api/v1/asistencia?${params.toString()}`;
+    const url = `http://3.145.205.44/api/v1/asistencia?${params.toString()}`;
     try {
       const response = await fetch(url);
       const info = await response.json();
@@ -39,7 +39,7 @@ const MostrarAsistencias = () => {
   };
 
   const getEmpleados = async () => {
-    const response = await fetch("http://localhost:3001/api/v1/empleados");
+    const response = await fetch("http://3.145.205.44/api/v1/empleados");
     const info = await response.json();
     if (info) setEmpleados(info);
   };
