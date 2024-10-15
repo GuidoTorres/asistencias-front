@@ -28,7 +28,7 @@ const MostrarAsistencias = () => {
     if (data.fecha) {
       params.append("fecha", data.fecha);
     }
-    const url = `http://3.145.205.44/api/v1/asistencia?${params.toString()}`;
+    const url = `http://localhost:3001/api/v1/asistencia?${params.toString()}`;
     try {
       const response = await fetch(url);
       const info = await response.json();
@@ -39,7 +39,7 @@ const MostrarAsistencias = () => {
   };
 
   const getEmpleados = async () => {
-    const response = await fetch("http://3.145.205.44/api/v1/empleados");
+    const response = await fetch("http://localhost:3001/api/v1/empleados");
     const info = await response.json();
     if (info) setEmpleados(info);
   };
@@ -66,10 +66,10 @@ const MostrarAsistencias = () => {
         <Flex justify="center" align="center" gap={"4px"}>
           <Image
             src={record?.foto_ingreso}
-            style={{ height:"30px", width:"30px" }}
+            style={{ height: "30px", width: "30px" }}
             preview
           />
-          <p>{record?.estado_ingreso}</p>
+          <Tag>{record?.estado_ingreso}</Tag>
         </Flex>
       ),
       align: "center",
@@ -80,21 +80,49 @@ const MostrarAsistencias = () => {
         <Flex justify="center" align="center" gap={"4px"}>
           <Image
             src={record?.foto_salida}
-            style={{ height:"30px", width:"30px" }}
+            style={{ height: "30px", width: "30px" }}
           />
-          <p>{record?.estado_salida}</p>
+          <Tag>{record?.estado_salida}</Tag>
         </Flex>
       ),
       align: "center",
     },
     {
       title: "Ubicación Ingreso",
-      dataIndex: "latitud_ingreso",
+      render: (_, record) => (
+        <Flex justify="center" align="center" gap={"4px"}>
+          {record?.latitud_ingreso ? (
+            <a
+              href={record.latitud_ingreso} // URL a la que deseas redirigir
+              target="_blank" // Abre el enlace en una nueva pestaña
+              rel="noopener noreferrer" // Seguridad adicional para prevenir vulnerabilidades
+            >
+              Ver Ubicación
+            </a>
+          ) : (
+            <p>Sin ubicación</p> // Mostrar un mensaje si no hay latitud_ingreso
+          )}
+        </Flex>
+      ),
       align: "center",
     },
     {
       title: "Ubicación Salida",
-      dataIndex: "latitud_salida",
+      render: (_, record) => (
+        <Flex justify="center" align="center" gap={"4px"}>
+          {record?.latitud_salida ? (
+            <a
+              href={record.latitud_salida} // URL a la que deseas redirigir
+              target="_blank" // Abre el enlace en una nueva pestaña
+              rel="noopener noreferrer" // Seguridad adicional para prevenir vulnerabilidades
+            >
+              Ver Ubicación
+            </a>
+          ) : (
+            <p>Sin ubicación</p> // Mostrar un mensaje si no hay latitud_ingreso
+          )}
+        </Flex>
+      ),
       align: "center",
     },
     {
@@ -114,7 +142,6 @@ const MostrarAsistencias = () => {
       ),
       align: "center",
     },
-
   ];
 
   return (
