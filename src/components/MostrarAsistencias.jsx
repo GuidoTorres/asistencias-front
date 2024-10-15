@@ -1,4 +1,4 @@
-import { DatePicker, Select, Table, Tag } from "antd";
+import { DatePicker, Select, Table, Tag, Image, Flex } from "antd";
 import React, { useEffect, useState } from "react";
 import "./styles/mostrarAsistencias.css"; // Importa tus estilos aquí
 
@@ -46,6 +46,11 @@ const MostrarAsistencias = () => {
 
   const columns = [
     {
+      title: "Id",
+      dataIndex: "id",
+      align: "center",
+    },
+    {
       title: "Empleado",
       render: (_, record) => record?.empleado?.nombre,
       align: "center",
@@ -57,15 +62,41 @@ const MostrarAsistencias = () => {
     },
     {
       title: "Ingreso",
-      dataIndex: "estado_ingreso",
+      render: (_, record) => (
+        <Flex justify="center" align="center" gap={"4px"}>
+          <Image
+            src={record?.foto_ingreso}
+            style={{ height:"30px", width:"30px" }}
+            preview
+          />
+          <p>{record?.estado_ingreso}</p>
+        </Flex>
+      ),
       align: "center",
     },
     {
       title: "Salida",
-      dataIndex: "estado_salida",
+      render: (_, record) => (
+        <Flex justify="center" align="center" gap={"4px"}>
+          <Image
+            src={record?.foto_salida}
+            style={{ height:"30px", width:"30px" }}
+          />
+          <p>{record?.estado_salida}</p>
+        </Flex>
+      ),
       align: "center",
     },
-
+    {
+      title: "Ubicación Ingreso",
+      dataIndex: "latitud_ingreso",
+      align: "center",
+    },
+    {
+      title: "Ubicación Salida",
+      dataIndex: "latitud_salida",
+      align: "center",
+    },
     {
       title: "Estado día",
       render: (_, record) => (
@@ -83,6 +114,7 @@ const MostrarAsistencias = () => {
       ),
       align: "center",
     },
+
   ];
 
   return (
